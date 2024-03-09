@@ -1,0 +1,7 @@
+Name,Category,Cost,Level,Description
+Basic Enchantment,Enchantment,50,1,Level 1 enchantment cost.
+Knife,Conjuration,10,1,Knife with D4+1 damage. Gone after 5 round.
+Flame Thrower,Distruction,10,1,Flame thrower with D8 fire damage. 10ft range 5ft arch. 
+Stobe,Illusion,5,1,Stobe light with enemy disadvantage withing 20 ft.
+Minor Healing,Restoration,10,1,2 hit points.
+Silent Step,Alteration,5,1,Quite foot steps.

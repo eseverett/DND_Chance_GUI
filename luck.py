@@ -2,8 +2,8 @@ import sys
 import random
 import scipy.stats as stats
 import matplotlib.pyplot as plt
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget
-from PyQt5.QtCore import QTimer
+from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget
+from PyQt6.QtCore import QTimer
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 class GaussianRandomNumberGUI(QMainWindow):
@@ -89,7 +89,7 @@ class GaussianRandomNumberGUI(QMainWindow):
 def main():
     app = QApplication(sys.argv)
     ex = GaussianRandomNumberGUI()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 
 if __name__ == '__main__':
     main()

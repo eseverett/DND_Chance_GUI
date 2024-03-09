@@ -1,60 +1,94 @@
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QProgressBar, QLabel, QHBoxLayout, QCheckBox
+from PyQt6.QtCore import QTimer
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QProgressBar, QLabel
+import pandas as pd
+from functools import partial
+from PyQt6 import QtCore
 
 class MainWindow(QWidget):
-    def __init__(self):
+    def __init__(self, configFile):
         super().__init__()
-
+        self.configFile = configFile
         self.initUI()
 
     def initUI(self):
-        layout = QVBoxLayout()
+        self.layout = QVBoxLayout()
         
         self.setGeometry(300, 300, 2000, 1000)
         self.setWindowTitle('Mana Pool')
 
         self.progressBar = QProgressBar(self)
-        self.progressBar.setMaximum(500)
-        self.progressBar.setValue(500)
+        self.progressBar.setMinimumSize(1850, 30)  
+        self.progressBar.setMaximum(100)
+        self.progressBar.setValue(100)
 
-        self.maxValueLabel = QLabel(f'Max Value: {self.progressBar.maximum()}', self)
-        self.currentValueLabel = QLabel(f'Current Value: {self.progressBar.value()}', self)
-        
-        self.button1 = QPushButton('spell1', self)
-        self.button1.clicked.connect(self.spell1)
-        
-        self.button2 = QPushButton('spell2', self)
-        self.button2.clicked.connect(self.spell2)
+        self.maxValueLabel = QLabel(f'Max Mana: {self.progressBar.maximum()}', self)
+        self.currentValueLabel = QLabel(f'Current Mana: {self.progressBar.value()}', self)
 
-        layout.addWidget(self.progressBar)
-        layout.addWidget(self.maxValueLabel)
-        layout.addWidget(self.currentValueLabel)
-        layout.addWidget(self.button1)
-        layout.addWidget(self.button2)
+        labelLayout = QHBoxLayout()
+        labelLayout.addWidget(self.maxValueLabel)
+        labelLayout.addWidget(self.currentValueLabel)
+        labelLayout.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
-        self.setLayout(layout)
+        self.layout.addLayout(labelLayout)
 
-    def spell1(self):
+        self.loadSpellsFromConfig()
+
+        self.manaRegenCheckbox = QCheckBox("Mana Regeneration", self)
+        self.manaRegenCheckbox.stateChanged.connect(self.toggleManaRegeneration)
+        self.layout.addWidget(self.manaRegenCheckbox)
+
+        self.regenTimer = QTimer(self)
+        self.regenTimer.timeout.connect(self.regenMana)
+        self.regenTimer.setInterval(1000)  # Regenerate mana every 1000 milliseconds (1 second)
+
+        self.setLayout(self.layout)
+
+    def toggleManaRegeneration(self, _):
+        if self.manaRegenCheckbox.isChecked():
+            print("Mana regeneration started")
+            self.regenTimer.start()
+        else:
+            print("Mana regeneration stopped")
+            self.regenTimer.stop()
+
+
+    def regenMana(self):
         currentValue = self.progressBar.value()
-        subtractAmount = 10
-        newValue = max(0, currentValue - subtractAmount)
+        maxValue = self.progressBar.maximum()
+        newValue = min(maxValue, currentValue + 1)
+        print(f"Regenerating mana: {newValue}")  # Debugging print
         self.progressBar.setValue(newValue)
-        
-        self.currentValueLabel.setText(f'Current Value: {newValue}')
-        
-    def spell2(self):
+        self.currentValueLabel.setText(f'Current Mana: {newValue}')
+
+    def loadSpellsFromConfig(self):
+        try:
+            spells_df = pd.read_csv(self.configFile, delimiter=',')
+            
+            for index, row in spells_df.iterrows():
+                buttonLabel = f"{row['Category']} {row['Level']}: {row['Name']}"
+                descriptionLabel = QLabel(f"{row['Description']} Cost: {row['Cost']}", self)
+                spellButton = QPushButton(buttonLabel, self)
+                spellCost = int(row['Cost'])
+                spellButton.clicked.connect(partial(self.castSpell, spellCost))
+                
+                self.layout.addWidget(spellButton)
+                self.layout.addWidget(descriptionLabel)
+        except Exception as e:
+            print(f"Failed to load config file: {e}")
+
+    def castSpell(self, manaCost):
         currentValue = self.progressBar.value()
-        subtractAmount = 50
-        newValue = max(0, currentValue - subtractAmount)
+        newValue = max(0, currentValue - manaCost)
         self.progressBar.setValue(newValue)
-        
         self.currentValueLabel.setText(f'Current Value: {newValue}')
 
 def main():
+    configFile = 'DND_Chance_GUI/conf.csv' 
     app = QApplication(sys.argv)
-    mainWin = MainWindow()
+    mainWin = MainWindow(configFile)
     mainWin.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 
 if __name__ == '__main__':
     main()
