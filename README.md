@@ -1,3 +1,7 @@
-# DND_Chance_GUI
+# DnD GUIs
 
-This is a GUI that is used to implement a luck mechanic off of a Gaussian distribution.
+There are two GUIs currently in this repository. 
+
+The first GUI uses a Gaussian distribution to impliment an in game luck mechanic.
+
+The second GUI uses a config file to populate a GUI with abilities, implimenting an energy usage and regeneration system. 
