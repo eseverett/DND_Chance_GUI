@@ -40,7 +40,7 @@ class MainWindow(QWidget):
 
         self.regenTimer = QTimer(self)
         self.regenTimer.timeout.connect(self.regenMana)
-        self.regenTimer.setInterval(1000)  # Regenerate mana every 1000 milliseconds (1 second)
+        self.regenTimer.setInterval(100)  # Regenerate mana every 1000 milliseconds (1 second)
 
         self.setLayout(self.layout)
 
