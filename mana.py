@@ -84,7 +84,8 @@ class MainWindow(QWidget):
         self.currentValueLabel.setText(f'Current Value: {newValue}')
 
 def main():
-    configFile = 'DND_Chance_GUI/conf.csv' 
+    # configFile = 'DND_Chance_GUI/conf.csv' 
+    configFile = 'conf.csv'
     app = QApplication(sys.argv)
     mainWin = MainWindow(configFile)
     mainWin.show()
